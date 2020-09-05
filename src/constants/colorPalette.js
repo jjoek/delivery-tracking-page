@@ -1,0 +1,17 @@
+export default {
+  COLOR_POINT:  "rgb(7,26,124)",
+  COLOR_POINT_FILL: "rgb(18,34,60)",
+  COLOR_LANDSCAPE: "#ffffff",
+  COLOR_BORDERS: "rgb(255,255,255)",
+  COLOR_LINE: "rgb(11,28,109)",
+  COLOR_SELECTED_POINT: "rgb(255,255,255)",
+
+  COLOR_BROWN: "rgb(255,255,255)",
+  COLOR_BLACK: "rgb(255,255,255)",
+  COLOR_BLUE: "rgb(255,255,255)",
+  COLOR_LIGHT_BLUE: "rgb(255,255,255)",
+  COLOR_WHITE: "rgb(255,255,255)",
+  COLOR_WHITEY: "rgb(255,255,255)",
+  COLOR_GREEN: "rgb(255,255,255)",
+  COLOR_TOMATO: "rgb(255,255,255)",
+};
