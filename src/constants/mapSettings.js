@@ -1,4 +1,4 @@
-import colorPalette from "@/constants/colorPalette";
+import colorPalette from "@/constants/colorPalette.js";
 
 const {
   COLOR_LANDSCAPE,

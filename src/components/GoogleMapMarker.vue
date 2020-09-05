@@ -1,6 +1,5 @@
 <script>
-import { POINT_MARKER_ICON_CONFIG } from '@/constants/mapSettings';
-import { ACTIVE_POINT_MARKER_ICON_CONFIG } from '@/constants/mapSettings';
+import { POINT_MARKER_ICON_CONFIG, ACTIVE_POINT_MARKER_ICON_CONFIG } from '@/constants/mapSettings';
 
 export default {
     props: {
@@ -29,34 +28,34 @@ export default {
     }),
 
     computed: {
-        active () {
+        active() {
             return this.marker.current_state;
         },
 
-        contentStr () {
-            return '<div id="content">'+
-            '<div id="siteNotice">'+
-            '</div>'+
-            '<h1 id="firstHeading" class="firstHeading">' + this.marker.driver + '</h1>'+
-            '<div id="bodyContent">'+
-            '<p>Currently at: ' + this.marker.position.lat + ',  ' + this.marker.position.lng + '</p>'+
-            '</div>'+
-            '</div>';
-        }
+        contentStr() {
+            return `${'<div id="content">'
+            + '<div id="siteNotice">'
+            + '</div>'
+            + '<h1 id="firstHeading" class="firstHeading">'}${this.marker.driver}</h1>`
+            + '<div id="bodyContent">'
+            + `<p>Currently at: ${this.marker.position.lat},  ${this.marker.position.lng}</p>`
+            + '</div>'
+            + '</div>';
+        },
     },
 
     watch: {
-        active () {
-            this.markerObj.setMap(null)
+        active() {
+            this.markerObj.setMap(null);
 
             this.initialize();
-        }
+        },
     },
 
     methods: {
 
-        transition(){
-            if(this.marker && this.marker.previous_position.lat) {
+        transition() {
+            if (this.marker && this.marker.previous_position.lat) {
                 this.deltaLat = (this.marker.position.lat - this.marker.previous_position.lat) / this.numDeltas;
                 this.deltaLng = (this.marker.position.lng - this.marker.previous_position.lng) / this.numDeltas;
 
@@ -68,20 +67,18 @@ export default {
             this.marker.previous_position.lat += this.deltaLat;
             this.marker.previous_position.lng += this.deltaLng;
 
-            let latlng = new this.google.maps.LatLng(this.marker.previous_position.lat, this.marker.previous_position.lng);
+            const latlng = new this.google.maps.LatLng(this.marker.previous_position.lat, this.marker.previous_position.lng);
 
             this.markerObj.setPosition(latlng);
 
-            if (this.iterator != this.numDeltas) {
-                this.iterator++;
+            if (this.iterator !== this.numDeltas) {
+                this.iterator += 1;
                 setTimeout(this.moveMarker, this.delay);
             }
-
         },
 
-
         initialize() {
-            let locationCoordinates = "@ " + this.marker.position.lat + ", " + this.marker.position.lng;
+            const locationCoordinates = `@ ${this.marker.position.lat}, ${this.marker.position.lng}`;
 
             this.markerObj = new this.google.maps.Marker({
                 position: this.marker.position,
@@ -90,7 +87,7 @@ export default {
                     color: '#00aaff',
                     fontWeight: 'bold',
                     fontSize: '14px',
-                    text: this.marker.current_state  === 'active' ? this.marker.driver : '.',
+                    text: this.marker.current_state === 'active' ? this.marker.driver : '.',
                 },
                 map: this.map,
                 title: locationCoordinates,
@@ -99,14 +96,14 @@ export default {
 
             this.transition();
 
-            if(this.marker.current_state === 'active' ) {
-                let self = this;
+            if (this.marker.current_state === 'active') {
+                const self = this;
 
-                var infowindow = new this.google.maps.InfoWindow({
-                    content: self.contentStr
+                const infowindow = new this.google.maps.InfoWindow({
+                    content: self.contentStr,
                 });
 
-                this.markerObj.addListener('click', function() {
+                this.markerObj.addListener('click', () => {
                     infowindow.open(self.map, self.markerObj);
                 });
             }
@@ -117,6 +114,8 @@ export default {
         this.initialize();
     },
 
-    render() {},
+    render() {
+        return null;
+    },
 };
 </script>

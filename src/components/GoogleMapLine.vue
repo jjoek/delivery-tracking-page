@@ -18,13 +18,15 @@ export default {
     },
 
     mounted() {
-        const line = new this.google.maps.Polyline({
+        new this.google.maps.Polyline({
             path: this.path,
             map: this.map,
             ...LINE_PATH_CONFIG,
         });
     },
 
-  render() {},
+    render() {
+        return null;
+    },
 };
 </script>

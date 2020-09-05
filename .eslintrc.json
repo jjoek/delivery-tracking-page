@@ -1,0 +1,57 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:vue/essential",
+        "airbnb-base"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 9,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true,
+            "experimentalObjectRestSpread": true
+        }
+    },
+    "plugins": [
+        "vue"
+    ],
+    "settings": {
+        "import/resolver": {
+            "alias": [
+                [ "@", "./src" ]
+            ],
+            "node": {
+                "paths": [
+                    "src"
+                ],
+                "extensions": [
+                    ".js", ".vue"
+                ]
+            }
+        }
+    },
+    "rules": {
+        "indent": ["error", 4],
+        "max-len": [
+            "error",
+            { "code": 150 }
+        ],
+        "no-new": 0,
+        "import/extensions": [
+            "error",
+            "always",
+            {
+                "js": "never",
+                "vue" : "never"
+            }
+        ]
+    }
+}

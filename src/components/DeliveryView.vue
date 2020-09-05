@@ -22,145 +22,143 @@
     </GoogleMapLoader>
 </template>
 <script>
-    import {ACTIVE_POINT_MARKER_ICON_CONFIG, mapSettings, POINT_MARKER_ICON_CONFIG} from '@/constants/mapSettings';
-    import GoogleMapLoader from './GoogleMapLoader';
-    import GoogleMapLine from './GoogleMapLine';
-    import GoogleMapMarker from './GoogleMapMarker';
+import { mapSettings } from '@/constants/mapSettings';
+import GoogleMapLoader from './GoogleMapLoader';
+import GoogleMapLine from './GoogleMapLine';
+import GoogleMapMarker from './GoogleMapMarker';
 
-    export default {
-        components: {
-            GoogleMapLoader, GoogleMapLine, GoogleMapMarker,
-        },
+export default {
+    components: {
+        GoogleMapLoader, GoogleMapLine, GoogleMapMarker,
+    },
 
-        data() {
+    data() {
+        return {
+            markers: [],
+            lines: [],
+            apiCaller: null,
+            driver: 'Driver A',
+        };
+    },
+
+    computed: {
+        mapConfig() {
             return {
-                markers: [],
-                lines: [],
-                apiCaller: null,
-                driver:'Driver A',
+                ...mapSettings,
+                center: { lat: -1.298982, lng: 36.776811 },
             };
         },
 
-        computed: {
-            mapConfig() {
-                return {
-                    ...mapSettings,
-                    center: { lat: -1.298982, lng: 36.776811 },
-                };
-            },
-
-            locationCoordinates () {
-                return [
-                    [-1.300355, 36.773850],
-                    [-1.298982, 36.776811],
-                    [-1.297459, 36.776747],
-                    [-1.296193, 36.776726],
-                    [-1.296097, 36.779236],
-                    [-1.296151, 36.777637],
-                    [-1.296215, 36.776693],
-                    [-1.294252, 36.776586],
-                    [-1.294048, 36.776790],
-                    [-1.293973, 36.779118],
-                    [-1.292622, 36.779075],
-                    [-1.291844, 36.779049],
-                ]
-            },
-
-            mapCenter() {
-                return this.markers[1].position;
-            },
+        locationCoordinates() {
+            return [
+                [-1.300355, 36.773850],
+                [-1.298982, 36.776811],
+                [-1.297459, 36.776747],
+                [-1.296193, 36.776726],
+                [-1.296097, 36.779236],
+                [-1.296151, 36.777637],
+                [-1.296215, 36.776693],
+                [-1.294252, 36.776586],
+                [-1.294048, 36.776790],
+                [-1.293973, 36.779118],
+                [-1.292622, 36.779075],
+                [-1.291844, 36.779049],
+            ];
         },
 
-        methods: {
-            fetchLocations () {
-                let current_location_index = 0
+        mapCenter() {
+            return this.markers[1].position;
+        },
+    },
 
-                let self = this;
+    methods: {
+        fetchLocations() {
+            let currentLocationIndex = 0;
 
-                self.apicaller = setInterval(function () {
-                    if(self.locationCoordinates && (current_location_index < self.locationCoordinates.length)) {
-                        // hack the driver switch after 25 seconds
-                        // by this time driver A will have moved for about 5 seconds
-                        // thus only covered 3 co-ordinates
-                        if(current_location_index === 3) {
-                            // do nothing for the 10 seconds for driver A
-                            // add driver B co-ordinates now
-                            self.locationCoordinates.splice(2, 0, [
-                                -1.291879, 36.778389
-                            ]);
-                            self.locationCoordinates.join()
+            const self = this;
 
-                            self.driver = 'Driver B' // driver b takes over from there
-                        }
+            self.apicaller = setInterval(() => {
+                if (self.locationCoordinates && (currentLocationIndex < self.locationCoordinates.length)) {
+                    // hack the driver switch after 25 seconds
+                    // by this time driver A will have moved for about 5 seconds
+                    // thus only covered 3 co-ordinates
+                    if (currentLocationIndex === 3) {
+                        // do nothing for the 10 seconds for driver A
+                        // add driver B co-ordinates now
+                        self.locationCoordinates.splice(2, 0, [
+                            -1.291879, 36.778389,
+                        ]);
+                        self.locationCoordinates.join();
 
-                        let current_lat = self.locationCoordinates[current_location_index][0];
-                        let current_long = self.locationCoordinates[current_location_index][1];
-
-                        self.addMarker(current_location_index, current_lat, current_long, self.driver);
-
-                        // get path
-                        if(self.locationCoordinates.length > 1 && current_location_index > 0) {
-                            self.addPath(current_location_index, current_lat, current_long);
-                        }
-
-                        // inactivate the previous marker, (not active anymore)
-                        if(current_location_index > 0) {
-                            self.markers[current_location_index - 1].current_state = null;
-                        }
-
-                        self.mapConfig.center.lat = current_lat;
-                        self.mapConfig.center.long = current_long;
-
-                        current_location_index++;
-                    } else {
-                        clearInterval(self.apicaller);
+                        self.driver = 'Driver B'; // driver b takes over from there
                     }
-                }, 5000)
-            },
 
-            addMarker (current_location_index, current_lat, current_long, driver) {
+                    const currentLat = self.locationCoordinates[currentLocationIndex][0];
+                    const currentLong = self.locationCoordinates[currentLocationIndex][1];
 
-                let previous_marker = current_location_index > 0 ? this.markers[current_location_index - 1] : null;
+                    self.addMarker(currentLocationIndex, currentLat, currentLong, self.driver);
 
-                // markers
-                this.markers.push({
-                        id: current_location_index,
-                        current_state: 'active',
-                        driver: driver,
-                        position:
-                            {
-                                lat: current_lat,
-                                lng: current_long,
-                            },
-                        previous_position: {
-                            lat: previous_marker ? previous_marker.position.lat : null,
-                            lng: previous_marker ? previous_marker.position.lng : null
-                        }
-                    },
-                );
-            },
+                    // get path
+                    if (self.locationCoordinates.length > 1 && currentLocationIndex > 0) {
+                        self.addPath(currentLocationIndex, currentLat, currentLong);
+                    }
 
-            addPath (current_location_index, current_lat, current_long) {
-                this.lines.push(
-                    {
-                        id: current_location_index + 'l',
-                        path: [
-                            {
-                                lat: this.locationCoordinates[current_location_index - 1][0],
-                                lng: this.locationCoordinates[current_location_index - 1][1]
-                            },
-                            {
-                                lat: current_lat,
-                                lng: current_long
-                            }
-                        ]
-                    },
-                )
-            }
+                    // inactivate the previous marker, (not active anymore)
+                    if (currentLocationIndex > 0) {
+                        self.markers[currentLocationIndex - 1].current_state = null;
+                    }
+
+                    self.mapConfig.center.lat = currentLat;
+                    self.mapConfig.center.long = currentLong;
+
+                    currentLocationIndex += 1;
+                } else {
+                    clearInterval(self.apicaller);
+                }
+            }, 5000);
         },
 
-        mounted () {
-            this.fetchLocations();
-        }
-    };
+        addMarker(currentLocationIndex, currentLat, currentLong, driver) {
+            const previousMarker = currentLocationIndex > 0 ? this.markers[currentLocationIndex - 1] : null;
+
+            // markers
+            this.markers.push({
+                id: currentLocationIndex,
+                current_state: 'active',
+                driver,
+                position:
+                            {
+                                lat: currentLat,
+                                lng: currentLong,
+                            },
+                previous_position: {
+                    lat: previousMarker ? previousMarker.position.lat : null,
+                    lng: previousMarker ? previousMarker.position.lng : null,
+                },
+            });
+        },
+
+        addPath(currentLocationIndex, currentLat, currentLong) {
+            this.lines.push(
+                {
+                    id: `${currentLocationIndex}l`,
+                    path: [
+                        {
+                            lat: this.locationCoordinates[currentLocationIndex - 1][0],
+                            lng: this.locationCoordinates[currentLocationIndex - 1][1],
+                        },
+                        {
+                            lat: currentLat,
+                            lng: currentLong,
+                        },
+                    ],
+                },
+            );
+        },
+    },
+
+    mounted() {
+        this.fetchLocations();
+    },
+};
 </script>

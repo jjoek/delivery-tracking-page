@@ -6,21 +6,21 @@
 </template>
 
 <script>
-  import DeliveryView from "./components/DeliveryView";
+import DeliveryView from './components/DeliveryView';
 
 export default {
-  name: 'app',
+    name: 'app',
 
-  components: {
-    DeliveryView
-  },
+    components: {
+        DeliveryView,
+    },
 
-  data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
-    }
-  }
-}
+    data() {
+        return {
+            msg: 'Welcome to Your Vue.js App',
+        };
+    },
+};
 </script>
 
 <style>
